@@ -1,5 +1,6 @@
 import pandas as pd
 import yfinance as yf
+import math
 
 def get_quandl_style_data(ticker, start_date='2020-01-01', end_date='2023-12-31'):
     t = yf.Ticker(ticker)
@@ -32,4 +33,12 @@ df['HL_PCT'] = (df['Adj. High'] - df['Adj. Low']) / df['Adj. Close'] * 100
 df['PCT_change'] = (df['Adj. Close'] - df['Adj. Open']) / df['Adj. Open'] * 100
 
 df = df[['Adj. Close', 'HL_PCT', 'PCT_change', 'Adj. Volume']]
+
+for_cast_col = 'Adj. Close'
+df.fillna(-99999, inplace=True)
+forecast_out = int(math.ceil(0.01 * len(df)))
+
+df['label'] = df[for_cast_col].shift(-forecast_out)
+df.dropna(inplace=True)
+
 print(df.head())
