@@ -6,6 +6,8 @@ from sklearn import preprocessing, model_selection, svm
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 from matplotlib import style
+import pickle
+
 
 style.use('ggplot')
 
@@ -34,7 +36,7 @@ def get_quandl_style_data(ticker, start_date='2020-01-01', end_date='2023-12-31'
     
     return result
 
-df = get_quandl_style_data('GOOGL')
+df = get_quandl_style_data('GOOG')
 
 df['HL_PCT'] = (df['Adj. High'] - df['Adj. Low']) / df['Adj. Close'] * 100
 df['PCT_change'] = (df['Adj. Close'] - df['Adj. Open']) / df['Adj. Open'] * 100
@@ -57,8 +59,13 @@ y = np.array(df['label'])
 
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.2)
 
-clf = LinearRegression(n_jobs=-1)
-clf.fit(X_train, y_train)
+# clf = LinearRegression(n_jobs=-1)
+# clf.fit(X_train, y_train)
+# with open('linearregression.pickle', 'wb') as f:
+#     pickle.dump(clf, f)
+
+pickle_in = open('linearregression.pickle', 'rb')
+clf = pickle.load(pickle_in)
 accuracy = clf.score(X_test, y_test)
 
 forecast_set = clf.predict(X_lately)
